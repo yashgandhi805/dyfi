@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  .forest-green { color: #1E5631; }
+  .bg-forest { background-color: #1E5631; }
+  .bg-forest-light { background-color: #f0f7f2; }
+  .accent-green { color: #2E7D52; }
+  .btn-primary { background-color: #1E5631; color: white; }
+  .nav-link:hover { color: #1E5631; }
+  .result-card { background: linear-gradient(135deg, #1E5631 0%, #2e7d52 100%); }
+  input[type=range] { accent-color: #1E5631; }
+
+  .btn-primary { background-color: #1E5631; color: white; transition: background 0.2s; }
+  .btn-primary:hover { background-color: #174a29; }
+  .site-nav { z-index: 1000; }
+  .mobile-toggle { width: 40px; height: 40px; border-radius: 10px; display: none; align-items: center; justify-content: center; color: #1E5631; background: #f0f7f2; border: 1px solid rgba(30,86,49,0.12); }
+  .mobile-toggle:active { transform: scale(0.98); }
+  .mobile-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,0.42); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1090; }
+  .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
+  .mobile-menu { position: fixed; top: 0; right: 0; bottom: 0; width: min(86vw, 360px); background-color: #fff; transform: translateX(100%); transition: transform 0.22s ease; z-index: 1100; box-shadow: -18px 0 45px rgba(15,23,42,0.18); flex-direction: column; visibility: hidden; }
+  .mobile-menu.open { transform: translateX(0); visibility: visible; }
+  .mobile-menu-head { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; border-bottom: 1px solid #eef2f1; }
+  .mobile-menu-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .mobile-menu-link { display: flex; align-items: center; gap: 12px; min-height: 48px; border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+  .mobile-menu-link i { width: 18px; text-align: center; color: #1E5631; }
+  .mobile-menu-cta { margin-top: 10px; min-height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 700; }
+  body.nav-open { overflow: hidden; }
+  @media (max-width: 767px) {
+    body { overflow-x: hidden; }
+    .mobile-toggle { display: inline-flex !important; }
+    .mobile-backdrop { display: block !important; }
+    .mobile-menu { display: flex !important; }
+    .mobile-menu.open { transform: translateX(0) !important; }
+    section { padding-left: 1rem; padding-right: 1rem; }
+    .grid, .grid > *, .space-y-5, .space-y-6 { min-width: 0; }
+    .max-w-7xl, .max-w-xl, .max-w-lg, .max-w-sm { min-width: 0; }
+    h1 { font-size: 1.75rem !important; line-height: 1.16 !important; letter-spacing: 0; }
+    h2 { font-size: 1.5rem !important; line-height: 1.2 !important; }
+    h3 { line-height: 1.25 !important; }
+    .gradient-hero { padding-top: 2.75rem; padding-bottom: 2.75rem; }
+    .gradient-hero h1 { font-size: 2rem !important; line-height: 1.15 !important; }
+    .gradient-hero p { font-size: 1rem !important; line-height: 1.65 !important; }
+    section.bg-forest-light { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    section.py-10, section.py-16, section.py-14 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    .badge-pill { max-width: 100%; line-height: 1.35; }
+    .tool-card:hover { transform: none; }
+    .space-y-6 > .bg-white, .space-y-6 > .bg-forest-light { border-radius: 16px; padding: 1rem; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 > .flex.items-center { align-self: stretch; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 input[type='number'] { width: 100% !important; max-width: none; }
+    .result-card { border-radius: 16px; padding: 1.25rem; }
+    .result-card .grid { grid-template-columns: 1fr !important; gap: 0.85rem; }
+    .result-card p[id] { font-size: 1.2rem; line-height: 1.55rem; word-break: keep-all; }
+    .result-card p.text-2xl, .result-card p.text-xl { font-size: 1.2rem !important; line-height: 1.55rem !important; }
+    .result-card .border-t { padding-top: 0.85rem; }
+    input[type='number'] { max-width: 8rem; }
+    .mobile-chart-scroll { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 0.35rem; margin-left: 0; margin-right: 0; }
+    .mobile-chart-scroll canvas { width: 100% !important; max-width: 100% !important; height: 220px !important; }
+    #returnsChart, #riskChart { height: 210px !important; }
+    table { min-width: 560px; }
+    .overflow-x-auto { max-width: 100%; }
+    .fund-search { min-height: 44px; }
+    #fund-selector-row { gap: 1rem; }
+    #fund-cards > div { border-radius: 16px; padding: 1rem; }
+    #verdict { padding: 1rem; border-radius: 16px; }
+    .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+    .flow-arrow .fa-arrow-right { transform: rotate(90deg); }
+    .flow-arrow + p { text-align: center; }
+  }
+  @media (min-width: 768px) {
+    .mobile-toggle, .mobile-backdrop, .mobile-menu { display: none !important; visibility: hidden !important; }
+  }
+
+</style>
+
+<!-- NAVBAR -->
+<nav class="site-nav bg-white border-b border-gray-100 sticky top-0 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-[auto_1fr_auto] items-center h-16 gap-3">
+      <a href="index.html" class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-bold text-base forest-green leading-tight md:hidden">DYFI</span>
+        <span class="font-bold text-base forest-green leading-tight hidden md:inline truncate">Discipline Your Finance</span>
+      </a>
+      <div class="hidden md:flex items-center justify-center gap-5">
+        <a href="sip-calculator.html" class="text-sm text-gray-500 nav-link font-medium">SIP</a>
+        <a href="swp-calculator.html" class="text-sm font-semibold forest-green border-b-2 border-green-700 pb-0.5">SWP</a>
+        <a href="stp-calculator.html" class="text-sm text-gray-500 nav-link font-medium">STP</a>
+        <a href="lumpsum-calculator.html" class="text-sm text-gray-500 nav-link font-medium">Lumpsum</a>
+        <a href="mf-comparison.html" class="text-sm text-gray-500 nav-link font-medium">Compare Funds</a>
+      </div>
+      <a href="index.html" class="text-xs text-gray-500 hover:text-gray-700 hidden md:inline-flex items-center justify-self-end"><i class="fa-solid fa-house mr-1"></i> Home</a>
+      <button id="mobile-toggle" type="button" class="mobile-toggle md:hidden justify-self-end" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <i id="mobile-menu-icon" class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="mobile-backdrop" class="mobile-backdrop md:hidden" hidden></div>
+<aside id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+  <div class="mobile-menu-head">
+    <a href="index.html" class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-bold text-base forest-green leading-tight">Discipline Your Finance</span>
+    </a>
+    <button id="mobile-close" type="button" class="mobile-toggle" aria-label="Close navigation menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="mobile-menu-body">
+    <a href="index.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="sip-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-repeat"></i><span>SIP Calculator</span></a>
+      <a href="swp-calculator.html" class="mobile-menu-link bg-forest-light forest-green font-bold"><i class="fa-solid fa-money-bill-transfer"></i><span>SWP Calculator</span></a>
+      <a href="stp-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-arrows-left-right"></i><span>STP Calculator</span></a>
+      <a href="lumpsum-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-sack-dollar"></i><span>Lumpsum Calculator</span></a>
+      <a href="mf-comparison.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-scale-balanced"></i><span>Compare Funds</span></a>
+    <a href="sip-calculator.html" class="btn-primary mobile-menu-cta"><i class="fa-solid fa-calculator"></i><span>Start Calculating</span></a>
+  </div>
+</aside>
+<script>
+(function () {
+  const toggle = document.getElementById('mobile-toggle');
+  const close = document.getElementById('mobile-close');
+  const menu = document.getElementById('mobile-menu');
+  const backdrop = document.getElementById('mobile-backdrop');
+  const icon = document.getElementById('mobile-menu-icon');
+  if (!toggle || !close || !menu || !backdrop || !icon) return;
+  function setMenu(open) {
+    menu.className = open ? 'mobile-menu md:hidden open' : 'mobile-menu md:hidden';
+    backdrop.className = open ? 'mobile-backdrop md:hidden open' : 'mobile-backdrop md:hidden';
+    backdrop.hidden = !open;
+    menu.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+    document.body.classList.toggle('nav-open', open);
+  }
+  toggle.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+  close.addEventListener('click', function () { setMenu(false); });
+  backdrop.addEventListener('click', function () { setMenu(false); });
+  menu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', function () { setMenu(false); }); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') setMenu(false); });
+})();
+</script>
+
+<!-- PAGE HEADER -->
+<section class="bg-forest-light py-10 px-4 border-b border-green-100">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+      <a href="index.html" class="hover:text-green-700">Home</a>
+      <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+      <span class="forest-green font-medium">SWP Calculator</span>
+    </div>
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 bg-forest rounded-xl flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-money-bill-transfer text-white text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold forest-green">SWP Calculator</h1>
+        <p class="text-gray-500 text-sm mt-1 max-w-xl">Systematic Withdrawal Plan — Plan how much you can withdraw monthly from your mutual fund corpus and how long your investment will last.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="py-10 px-4 bg-white">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-8">
+
+      <!-- LEFT: Inputs -->
+      <div class="space-y-6">
+
+        <!-- Total Corpus -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Initial Corpus (Total Investment)</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-r border-gray-200">₹</span>
+              <input type="number" id="corpus" value="5000000" min="10000" max="100000000" step="10000" class="w-32 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+            </div>
+          </div>
+          <input type="range" id="corpusRange" min="100000" max="50000000" step="100000" value="5000000" class="w-full" oninput="syncSwp('corpus', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>₹1 L</span><span>₹5 Cr</span></div>
+        </div>
+
+        <!-- Monthly Withdrawal -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Monthly Withdrawal Amount</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-r border-gray-200">₹</span>
+              <input type="number" id="withdrawal" value="25000" min="1000" max="5000000" step="1000" class="w-28 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+            </div>
+          </div>
+          <input type="range" id="withdrawalRange" min="1000" max="500000" step="1000" value="25000" class="w-full" oninput="syncSwp('withdrawal', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>₹1,000</span><span>₹5,00,000</span></div>
+        </div>
+
+        <!-- Expected Return -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Expected Annual Return</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="returnRate" value="10" min="1" max="20" step="0.5" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">%</span>
+            </div>
+          </div>
+          <input type="range" id="returnRange" min="1" max="20" step="0.5" value="10" class="w-full" oninput="syncSwp('return', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1%</span><span>20%</span></div>
+        </div>
+
+        <!-- Time Period -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Withdrawal Period</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="timePeriod" value="20" min="1" max="40" step="1" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">Yrs</span>
+            </div>
+          </div>
+          <input type="range" id="timeRange" min="1" max="40" step="1" value="20" class="w-full" oninput="syncSwp('time', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1 yr</span><span>40 yrs</span></div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
+          <p class="text-xs text-amber-800 leading-relaxed">SWP projections assume a <strong>constant rate of return</strong>. Market fluctuations may reduce corpus faster. Monitor your portfolio regularly.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="space-y-5">
+
+        <!-- Result Summary Card -->
+        <div class="result-card rounded-2xl p-6 text-white shadow-xl">
+          <p class="text-green-200 text-xs font-semibold uppercase tracking-wider mb-4">SWP Summary</p>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-green-300 text-xs mb-1">Initial Corpus</p>
+              <p class="text-xl font-bold" id="r-corpus">₹50,00,000</p>
+            </div>
+            <div>
+              <p class="text-green-300 text-xs mb-1">Monthly Withdrawal</p>
+              <p class="text-xl font-bold" id="r-monthly">₹25,000</p>
+            </div>
+          </div>
+          <div class="border-t border-green-700 pt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-green-300 text-xs mb-1">Total Withdrawn</p>
+              <p class="text-xl font-bold" id="r-withdrawn">₹60,00,000</p>
+            </div>
+            <div>
+              <p class="text-green-300 text-xs mb-1">Remaining Corpus</p>
+              <p class="text-2xl font-extrabold" id="r-remaining">₹42,43,000</p>
+            </div>
+          </div>
+          <div id="corpus-warning" class="hidden mt-3 bg-red-500 bg-opacity-30 border border-red-400 rounded-lg p-2 text-xs text-red-100 flex items-center gap-2">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            <span id="corpus-warning-text">Warning: Corpus depleted before period ends.</span>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-gray-700">Corpus Balance Over Time</h3>
+            <div class="flex items-center gap-3 text-xs text-gray-500">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#1E5631"></span>Remaining Corpus</span>
+            </div>
+          </div>
+          <div class="mobile-chart-scroll"><canvas id="swpChart" height="220"></canvas></div>
+        </div>
+
+        <!-- Yearly Table -->
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-50">
+            <h3 class="text-sm font-semibold text-gray-700">Year-wise Breakdown</h3>
+          </div>
+          <div class="overflow-x-auto max-h-72 overflow-y-auto">
+            <table class="w-full text-xs">
+              <thead class="bg-gray-50 sticky top-0">
+                <tr>
+                  <th class="px-4 py-3 text-left text-gray-500 font-semibold">Year</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Withdrawn</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Interest Earned</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Balance</th>
+                </tr>
+              </thead>
+              <tbody id="swpTable" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explainers -->
+    <div class="mt-10 grid md:grid-cols-3 gap-6">
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-question-circle forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">What is SWP?</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">SWP allows you to withdraw a fixed amount from your mutual fund at regular intervals (monthly, quarterly). It provides a steady income stream while the remaining corpus continues to earn returns.</p>
+      </div>
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-user-tie forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">Who Should Use SWP?</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">Retirees seeking a regular income, investors with a large corpus needing monthly cash flows, or anyone wanting to manage withdrawals in a tax-efficient manner compared to lump-sum redemption.</p>
+      </div>
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-shield-halved forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">Tax on SWP</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">Each withdrawal is treated as a partial redemption. Gains are subject to capital gains tax (STCG or LTCG) depending on the holding period and fund type. Consult a tax advisor for personalised guidance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-gray-900 text-white py-6 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-gray-800 rounded-xl p-4 mb-4">
+      <p class="text-center text-xs text-gray-300 leading-relaxed">
+        <i class="fa-solid fa-circle-exclamation text-yellow-400 mr-2"></i>
+        <strong class="text-white">Mutual fund investments are subject to market risks, please read all scheme related documents carefully.</strong>
+      </p>
+    </div>
+    <p class="text-center text-xs text-gray-500">© 2026 Discipline Your Finance. For educational and illustration purposes only.</p>
+  </div>
+</footer>
+
+<script>
+  let swpChart = null;
+
+  function syncSwp(type, val) {
+    val = parseFloat(val);
+    if (type === 'corpus') { document.getElementById('corpus').value = val; document.getElementById('corpusRange').value = val; }
+    if (type === 'withdrawal') { document.getElementById('withdrawal').value = val; document.getElementById('withdrawalRange').value = val; }
+    if (type === 'return') { document.getElementById('returnRate').value = val; document.getElementById('returnRange').value = val; }
+    if (type === 'time') { document.getElementById('timePeriod').value = val; document.getElementById('timeRange').value = val; }
+    calculate();
+  }
+
+  function fmt(n) {
+    if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
+    if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+    if (n < 0) return '-₹' + Math.abs(Math.round(n)).toLocaleString('en-IN');
+    return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  function calculate() {
+    document.getElementById('corpusRange').value = document.getElementById('corpus').value;
+    document.getElementById('withdrawalRange').value = document.getElementById('withdrawal').value;
+    document.getElementById('returnRange').value = document.getElementById('returnRate').value;
+    document.getElementById('timeRange').value = document.getElementById('timePeriod').value;
+
+    let corpus = parseFloat(document.getElementById('corpus').value) || 5000000;
+    const W = parseFloat(document.getElementById('withdrawal').value) || 25000;
+    const r = (parseFloat(document.getElementById('returnRate').value) || 10) / 100 / 12;
+    const years = parseInt(document.getElementById('timePeriod').value) || 20;
+
+    document.getElementById('r-corpus').textContent = fmt(corpus);
+    document.getElementById('r-monthly').textContent = fmt(W);
+
+    let balance = corpus;
+    let totalWithdrawn = 0, totalInterest = 0;
+    const labels = [], balanceArr = [];
+    let tableHTML = '';
+    let depleted = false, depletedMonth = null;
+
+    for (let y = 1; y <= years; y++) {
+      let yearInterest = 0;
+      let yearWithdrawn = 0;
+      for (let m = 0; m < 12; m++) {
+        if (balance <= 0) {
+          depleted = true;
+          depletedMonth = depletedMonth || ((y - 1) * 12 + m);
+          break;
+        }
+        const interest = balance * r;
+        yearInterest += interest;
+        balance = balance + interest - W;
+        yearWithdrawn += W;
+        if (balance < 0) {
+          yearWithdrawn += balance;
+          balance = 0;
+          depleted = true;
+          depletedMonth = depletedMonth || ((y - 1) * 12 + m + 1);
+          break;
+        }
+      }
+      totalWithdrawn += yearWithdrawn;
+      totalInterest += yearInterest;
+      labels.push('Year ' + y);
+      balanceArr.push(Math.max(0, Math.round(balance)));
+
+      const rowClass = balance <= 0 ? 'bg-red-50' : 'hover:bg-gray-50';
+      tableHTML += `<tr class="${rowClass}">
+        <td class="px-4 py-2.5 font-medium text-gray-700">${y}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(yearWithdrawn)}</td>
+        <td class="px-4 py-2.5 text-right text-green-600">${fmt(Math.max(0,yearInterest))}</td>
+        <td class="px-4 py-2.5 text-right font-bold ${balance <= 0 ? 'text-red-500' : 'forest-green'}">${balance <= 0 ? '₹0 (Depleted)' : fmt(balance)}</td>
+      </tr>`;
+      if (depleted) break;
+    }
+
+    document.getElementById('r-withdrawn').textContent = fmt(totalWithdrawn);
+    document.getElementById('r-remaining').textContent = fmt(Math.max(0, balance));
+    document.getElementById('swpTable').innerHTML = tableHTML;
+
+    const warning = document.getElementById('corpus-warning');
+    if (depleted) {
+      warning.classList.remove('hidden');
+      const yearsToDepletion = Math.floor((depletedMonth - 1) / 12);
+      const monthInYear = ((depletedMonth - 1) % 12) + 1;
+      document.getElementById('corpus-warning-text').textContent = `Warning: Corpus will be depleted around Year ${yearsToDepletion + 1}, Month ${monthInYear}. Consider reducing withdrawal amount or increasing corpus.`;
+    } else {
+      warning.classList.add('hidden');
+    }
+
+    // Chart
+    const ctx = document.getElementById('swpChart').getContext('2d');
+    if (swpChart) swpChart.destroy();
+    swpChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Remaining Corpus',
+          data: balanceArr,
+          borderColor: '#1E5631',
+          backgroundColor: 'rgba(30,86,49,0.08)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: '#1E5631'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false }, tooltip: {
+          callbacks: { label: ctx => 'Corpus: ' + fmt(ctx.raw) }
+        }},
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: window.innerWidth < 768 ? 9 : 10 }, maxTicksLimit: window.innerWidth < 768 ? 5 : 10, maxRotation: window.innerWidth < 768 ? 0 : 50, autoSkip: true } },
+          y: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 10 }, callback: v => v >= 100000 ? '₹' + (v/100000).toFixed(0) + 'L' : '₹' + v } }
+        }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>

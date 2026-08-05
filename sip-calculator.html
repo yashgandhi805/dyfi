@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  .forest-green { color: #1E5631; }
+  .bg-forest { background-color: #1E5631; }
+  .bg-forest-light { background-color: #f0f7f2; }
+  .accent-green { color: #2E7D52; }
+  .badge-pill { background: rgba(30,86,49,0.1); color: #1E5631; }
+  .btn-primary { background-color: #1E5631; color: white; transition: background 0.2s; }
+  .btn-primary:hover { background-color: #174a29; }
+  .nav-link:hover { color: #1E5631; }
+  .result-card { background: linear-gradient(135deg, #1E5631 0%, #2e7d52 100%); }
+  input[type=range] { accent-color: #1E5631; }
+  .tab-active { background-color: #1E5631; color: white; }
+  .tab-btn { transition: all 0.2s; }
+  .info-tooltip { position: relative; display: inline-block; }
+  .info-tooltip:hover .tooltip-text { display: block; }
+  .tooltip-text { display: none; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #1F2937; color: white; padding: 6px 10px; border-radius: 8px; font-size: 11px; width: 180px; text-align: center; z-index: 10; }
+
+  .site-nav { z-index: 1000; }
+  .mobile-toggle { width: 40px; height: 40px; border-radius: 10px; display: none; align-items: center; justify-content: center; color: #1E5631; background: #f0f7f2; border: 1px solid rgba(30,86,49,0.12); }
+  .mobile-toggle:active { transform: scale(0.98); }
+  .mobile-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,0.42); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1090; }
+  .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
+  .mobile-menu { position: fixed; top: 0; right: 0; bottom: 0; width: min(86vw, 360px); background-color: #fff; transform: translateX(100%); transition: transform 0.22s ease; z-index: 1100; box-shadow: -18px 0 45px rgba(15,23,42,0.18); flex-direction: column; visibility: hidden; }
+  .mobile-menu.open { transform: translateX(0); visibility: visible; }
+  .mobile-menu-head { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; border-bottom: 1px solid #eef2f1; }
+  .mobile-menu-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .mobile-menu-link { display: flex; align-items: center; gap: 12px; min-height: 48px; border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+  .mobile-menu-link i { width: 18px; text-align: center; color: #1E5631; }
+  .mobile-menu-cta { margin-top: 10px; min-height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 700; }
+  body.nav-open { overflow: hidden; }
+  @media (max-width: 767px) {
+    body { overflow-x: hidden; }
+    .mobile-toggle { display: inline-flex !important; }
+    .mobile-backdrop { display: block !important; }
+    .mobile-menu { display: flex !important; }
+    .mobile-menu.open { transform: translateX(0) !important; }
+    section { padding-left: 1rem; padding-right: 1rem; }
+    .grid, .grid > *, .space-y-5, .space-y-6 { min-width: 0; }
+    .max-w-7xl, .max-w-xl, .max-w-lg, .max-w-sm { min-width: 0; }
+    h1 { font-size: 1.75rem !important; line-height: 1.16 !important; letter-spacing: 0; }
+    h2 { font-size: 1.5rem !important; line-height: 1.2 !important; }
+    h3 { line-height: 1.25 !important; }
+    .gradient-hero { padding-top: 2.75rem; padding-bottom: 2.75rem; }
+    .gradient-hero h1 { font-size: 2rem !important; line-height: 1.15 !important; }
+    .gradient-hero p { font-size: 1rem !important; line-height: 1.65 !important; }
+    section.bg-forest-light { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    section.py-10, section.py-16, section.py-14 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    .badge-pill { max-width: 100%; line-height: 1.35; }
+    .tool-card:hover { transform: none; }
+    .space-y-6 > .bg-white, .space-y-6 > .bg-forest-light { border-radius: 16px; padding: 1rem; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 > .flex.items-center { align-self: stretch; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 input[type='number'] { width: 100% !important; max-width: none; }
+    .result-card { border-radius: 16px; padding: 1.25rem; }
+    .result-card .grid { grid-template-columns: 1fr !important; gap: 0.85rem; }
+    .result-card p[id] { font-size: 1.2rem; line-height: 1.55rem; word-break: keep-all; }
+    .result-card p.text-2xl, .result-card p.text-xl { font-size: 1.2rem !important; line-height: 1.55rem !important; }
+    .result-card .border-t { padding-top: 0.85rem; }
+    input[type='number'] { max-width: 8rem; }
+    .mobile-chart-scroll { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 0.35rem; margin-left: 0; margin-right: 0; }
+    .mobile-chart-scroll canvas { width: 100% !important; max-width: 100% !important; height: 220px !important; }
+    #returnsChart, #riskChart { height: 210px !important; }
+    table { min-width: 560px; }
+    .overflow-x-auto { max-width: 100%; }
+    .fund-search { min-height: 44px; }
+    #fund-selector-row { gap: 1rem; }
+    #fund-cards > div { border-radius: 16px; padding: 1rem; }
+    #verdict { padding: 1rem; border-radius: 16px; }
+    .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+    .flow-arrow .fa-arrow-right { transform: rotate(90deg); }
+    .flow-arrow + p { text-align: center; }
+  }
+  @media (min-width: 768px) {
+    .mobile-toggle, .mobile-backdrop, .mobile-menu { display: none !important; visibility: hidden !important; }
+  }
+
+</style>
+
+<!-- NAVBAR -->
+<nav class="site-nav bg-white border-b border-gray-100 sticky top-0 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-[auto_1fr_auto] items-center h-16 gap-3">
+      <a href="index.html" class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-bold text-base forest-green leading-tight md:hidden">DYFI</span>
+        <span class="font-bold text-base forest-green leading-tight hidden md:inline truncate">Discipline Your Finance</span>
+      </a>
+      <div class="hidden md:flex items-center justify-center gap-5">
+        <a href="sip-calculator.html" class="text-sm font-semibold forest-green border-b-2 border-green-700 pb-0.5">SIP</a>
+        <a href="swp-calculator.html" class="text-sm text-gray-500 nav-link font-medium">SWP</a>
+        <a href="stp-calculator.html" class="text-sm text-gray-500 nav-link font-medium">STP</a>
+        <a href="lumpsum-calculator.html" class="text-sm text-gray-500 nav-link font-medium">Lumpsum</a>
+        <a href="mf-comparison.html" class="text-sm text-gray-500 nav-link font-medium">Compare Funds</a>
+      </div>
+      <a href="index.html" class="text-xs text-gray-500 hover:text-gray-700 hidden md:inline-flex items-center justify-self-end"><i class="fa-solid fa-house mr-1"></i> Home</a>
+      <button id="mobile-toggle" type="button" class="mobile-toggle md:hidden justify-self-end" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <i id="mobile-menu-icon" class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="mobile-backdrop" class="mobile-backdrop md:hidden" hidden></div>
+<aside id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+  <div class="mobile-menu-head">
+    <a href="index.html" class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-bold text-base forest-green leading-tight">Discipline Your Finance</span>
+    </a>
+    <button id="mobile-close" type="button" class="mobile-toggle" aria-label="Close navigation menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="mobile-menu-body">
+    <a href="index.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="sip-calculator.html" class="mobile-menu-link bg-forest-light forest-green font-bold"><i class="fa-solid fa-repeat"></i><span>SIP Calculator</span></a>
+      <a href="swp-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-money-bill-transfer"></i><span>SWP Calculator</span></a>
+      <a href="stp-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-arrows-left-right"></i><span>STP Calculator</span></a>
+      <a href="lumpsum-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-sack-dollar"></i><span>Lumpsum Calculator</span></a>
+      <a href="mf-comparison.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-scale-balanced"></i><span>Compare Funds</span></a>
+    <a href="sip-calculator.html" class="btn-primary mobile-menu-cta"><i class="fa-solid fa-calculator"></i><span>Start Calculating</span></a>
+  </div>
+</aside>
+<script>
+(function () {
+  const toggle = document.getElementById('mobile-toggle');
+  const close = document.getElementById('mobile-close');
+  const menu = document.getElementById('mobile-menu');
+  const backdrop = document.getElementById('mobile-backdrop');
+  const icon = document.getElementById('mobile-menu-icon');
+  if (!toggle || !close || !menu || !backdrop || !icon) return;
+  function setMenu(open) {
+    menu.className = open ? 'mobile-menu md:hidden open' : 'mobile-menu md:hidden';
+    backdrop.className = open ? 'mobile-backdrop md:hidden open' : 'mobile-backdrop md:hidden';
+    backdrop.hidden = !open;
+    menu.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+    document.body.classList.toggle('nav-open', open);
+  }
+  toggle.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+  close.addEventListener('click', function () { setMenu(false); });
+  backdrop.addEventListener('click', function () { setMenu(false); });
+  menu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', function () { setMenu(false); }); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') setMenu(false); });
+})();
+</script>
+
+<!-- PAGE HEADER -->
+<section class="bg-forest-light py-10 px-4 border-b border-green-100">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+      <a href="index.html" class="hover:text-green-700">Home</a>
+      <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+      <span class="forest-green font-medium">SIP Calculator</span>
+    </div>
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 bg-forest rounded-xl flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-repeat text-white text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold forest-green">SIP Calculator</h1>
+        <p class="text-gray-500 text-sm mt-1 max-w-xl">Systematic Investment Plan — Calculate the future value of your monthly SIP investments and see how disciplined investing builds wealth through the power of compounding.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CALCULATOR -->
+<section class="py-10 px-4 bg-white">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Mode tabs -->
+    <div class="flex gap-2 mb-8 bg-gray-100 rounded-xl p-1 max-w-sm">
+      <button onclick="setMode('regular')" id="tab-regular" class="tab-btn tab-active flex-1 py-2 px-4 rounded-lg text-sm font-semibold">Regular SIP</button>
+      <button onclick="setMode('stepup')" id="tab-stepup" class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-semibold text-gray-500">Step-up SIP</button>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+
+      <!-- LEFT: Inputs -->
+      <div class="space-y-6">
+
+        <!-- Monthly SIP -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              Monthly SIP Amount
+              <span class="info-tooltip"><i class="fa-solid fa-circle-info text-gray-400 text-xs cursor-help"></i>
+                <span class="tooltip-text">The fixed amount you invest every month into the mutual fund.</span>
+              </span>
+            </label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-r border-gray-200">₹</span>
+              <input type="number" id="sipAmount" value="5000" min="500" max="1000000" step="500" class="w-28 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+            </div>
+          </div>
+          <input type="range" id="sipRange" min="500" max="100000" step="500" value="5000" class="w-full" oninput="syncRange('sip', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>₹500</span><span>₹1,00,000</span></div>
+        </div>
+
+        <!-- Step-up (hidden by default) -->
+        <div id="stepup-section" class="hidden bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Annual Step-up %</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="stepupPct" value="10" min="1" max="50" step="1" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">%</span>
+            </div>
+          </div>
+          <input type="range" id="stepupRange" min="1" max="50" step="1" value="10" class="w-full" oninput="syncRange('stepup', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1%</span><span>50%</span></div>
+        </div>
+
+        <!-- Expected Return -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              Expected Annual Return
+              <span class="info-tooltip"><i class="fa-solid fa-circle-info text-gray-400 text-xs cursor-help"></i>
+                <span class="tooltip-text">Historical equity fund returns range from 10-15%. This is an estimate, not guaranteed.</span>
+              </span>
+            </label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="returnRate" value="12" min="1" max="30" step="0.5" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">%</span>
+            </div>
+          </div>
+          <input type="range" id="returnRange" min="1" max="30" step="0.5" value="12" class="w-full" oninput="syncRange('return', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1%</span><span>30%</span></div>
+        </div>
+
+        <!-- Time Period -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Investment Period</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="timePeriod" value="10" min="1" max="40" step="1" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">Yrs</span>
+            </div>
+          </div>
+          <input type="range" id="timeRange" min="1" max="40" step="1" value="10" class="w-full" oninput="syncRange('time', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1 yr</span><span>40 yrs</span></div>
+        </div>
+
+        <!-- Disclaimer note -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
+          <p class="text-xs text-amber-800 leading-relaxed">Returns shown are <strong>illustrative only</strong> based on assumed rate of return. Actual returns may be higher or lower. Mutual fund investments are subject to market risks.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="space-y-5">
+
+        <!-- Result Summary Card -->
+        <div class="result-card rounded-2xl p-6 text-white shadow-xl">
+          <p class="text-green-200 text-xs font-semibold uppercase tracking-wider mb-4">Projected Results</p>
+          <div class="grid grid-cols-3 gap-4 mb-6">
+            <div>
+              <p class="text-green-300 text-xs mb-1">Invested</p>
+              <p class="text-xl font-bold" id="totalInvested">₹6,00,000</p>
+            </div>
+            <div>
+              <p class="text-green-300 text-xs mb-1">Est. Returns</p>
+              <p class="text-xl font-bold" id="totalReturns">₹5,65,720</p>
+            </div>
+            <div>
+              <p class="text-green-300 text-xs mb-1">Total Value</p>
+              <p class="text-2xl font-extrabold" id="totalValue">₹11,65,720</p>
+            </div>
+          </div>
+          <!-- Mini progress bar -->
+          <div class="bg-green-900 rounded-full h-2 mb-2">
+            <div id="progressBar" class="bg-green-300 h-2 rounded-full" style="width:51%"></div>
+          </div>
+          <div class="flex justify-between text-xs text-green-300">
+            <span>Invested: <span id="pctInvested" class="font-semibold text-white">51%</span></span>
+            <span>Returns: <span id="pctReturns" class="font-semibold text-white">49%</span></span>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-gray-700">Year-by-Year Growth</h3>
+            <div class="flex items-center gap-3 text-xs text-gray-500">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#1E5631"></span>Total Value</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#86efac"></span>Invested</span>
+            </div>
+          </div>
+          <div class="mobile-chart-scroll"><canvas id="sipChart" height="220"></canvas></div>
+        </div>
+
+        <!-- Yearly Table -->
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-50">
+            <h3 class="text-sm font-semibold text-gray-700">Year-wise Breakdown</h3>
+          </div>
+          <div class="overflow-x-auto max-h-72 overflow-y-auto">
+            <table class="w-full text-xs">
+              <thead class="bg-gray-50 sticky top-0">
+                <tr>
+                  <th class="px-4 py-3 text-left text-gray-500 font-semibold">Year</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Invested</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Returns</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Total Value</th>
+                </tr>
+              </thead>
+              <tbody id="yearTable" class="divide-y divide-gray-50">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explainer -->
+    <div class="mt-10 grid md:grid-cols-3 gap-6">
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-question-circle forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">What is SIP?</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">A Systematic Investment Plan (SIP) allows you to invest a fixed amount regularly in a mutual fund scheme. SIPs harness the power of rupee cost averaging and compounding to build wealth gradually.</p>
+      </div>
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-calculator forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">How is it Calculated?</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">SIP returns are calculated using: <strong>M = P × [{(1+i)ⁿ - 1} / i] × (1+i)</strong>, where P = monthly amount, i = monthly rate, n = total months. This assumes a constant return rate.</p>
+      </div>
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-shield-halved forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">Important Note</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">Returns shown are based on an assumed constant annual return. Actual mutual fund returns vary based on market conditions. Past performance is not a guarantee of future results. Please read scheme documents carefully.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-gray-900 text-white py-6 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-gray-800 rounded-xl p-4 mb-4">
+      <p class="text-center text-xs text-gray-300 leading-relaxed">
+        <i class="fa-solid fa-circle-exclamation text-yellow-400 mr-2"></i>
+        <strong class="text-white">Mutual fund investments are subject to market risks, please read all scheme related documents carefully.</strong>
+      </p>
+    </div>
+    <p class="text-center text-xs text-gray-500">© 2026 Discipline Your Finance. For educational and illustration purposes only.</p>
+  </div>
+</footer>
+
+<script>
+  let mode = 'regular';
+  let sipChart = null;
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('tab-regular').className = m === 'regular' ? 'tab-btn tab-active flex-1 py-2 px-4 rounded-lg text-sm font-semibold' : 'tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-semibold text-gray-500';
+    document.getElementById('tab-stepup').className = m === 'stepup' ? 'tab-btn tab-active flex-1 py-2 px-4 rounded-lg text-sm font-semibold' : 'tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-semibold text-gray-500';
+    document.getElementById('stepup-section').classList.toggle('hidden', m !== 'stepup');
+    calculate();
+  }
+
+  function syncRange(type, val) {
+    val = parseFloat(val);
+    if (type === 'sip') { document.getElementById('sipAmount').value = val; document.getElementById('sipRange').value = val; }
+    if (type === 'return') { document.getElementById('returnRate').value = val; document.getElementById('returnRange').value = val; }
+    if (type === 'time') { document.getElementById('timePeriod').value = val; document.getElementById('timeRange').value = val; }
+    if (type === 'stepup') { document.getElementById('stepupPct').value = val; document.getElementById('stepupRange').value = val; }
+    calculate();
+  }
+
+  function fmt(n) {
+    if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
+    if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+    return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  function calculate() {
+    // sync ranges
+    document.getElementById('sipRange').value = document.getElementById('sipAmount').value;
+    document.getElementById('returnRange').value = document.getElementById('returnRate').value;
+    document.getElementById('timeRange').value = document.getElementById('timePeriod').value;
+    if (mode === 'stepup') document.getElementById('stepupRange').value = document.getElementById('stepupPct').value;
+
+    const P = parseFloat(document.getElementById('sipAmount').value) || 5000;
+    const r = (parseFloat(document.getElementById('returnRate').value) || 12) / 100 / 12;
+    const years = parseInt(document.getElementById('timePeriod').value) || 10;
+    const stepup = mode === 'stepup' ? (parseFloat(document.getElementById('stepupPct').value) || 10) / 100 : 0;
+
+    let invested = 0, corpus = 0;
+    const labels = [], investedArr = [], corpusArr = [];
+
+    for (let y = 1; y <= years; y++) {
+      const monthlyP = mode === 'stepup' ? P * Math.pow(1 + stepup, y - 1) : P;
+      for (let m = 0; m < 12; m++) {
+        corpus = (corpus + monthlyP) * (1 + r);
+        invested += monthlyP;
+      }
+      labels.push('Year ' + y);
+      investedArr.push(Math.round(invested));
+      corpusArr.push(Math.round(corpus));
+    }
+
+    const returns = corpus - invested;
+    const pctI = Math.round((invested / corpus) * 100);
+    const pctR = 100 - pctI;
+
+    document.getElementById('totalInvested').textContent = fmt(invested);
+    document.getElementById('totalReturns').textContent = fmt(returns);
+    document.getElementById('totalValue').textContent = fmt(corpus);
+    document.getElementById('progressBar').style.width = pctI + '%';
+    document.getElementById('pctInvested').textContent = pctI + '%';
+    document.getElementById('pctReturns').textContent = pctR + '%';
+
+    // Chart
+    const ctx = document.getElementById('sipChart').getContext('2d');
+    if (sipChart) sipChart.destroy();
+    sipChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Amount Invested', data: investedArr, backgroundColor: '#86efac', borderRadius: 4, stack: 'a' },
+          { label: 'Est. Returns', data: corpusArr.map((c, i) => c - investedArr[i]), backgroundColor: '#1E5631', borderRadius: 4, stack: 'a' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false }, tooltip: {
+          callbacks: {
+            label: function(ctx) { return ctx.dataset.label + ': ' + fmt(ctx.raw); }
+          }
+        }},
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { font: { size: window.innerWidth < 768 ? 9 : 10 }, maxTicksLimit: window.innerWidth < 768 ? 5 : 12, maxRotation: window.innerWidth < 768 ? 0 : 50, autoSkip: true } },
+          y: { stacked: true, grid: { color: '#f3f4f6' }, ticks: { font: { size: 10 }, callback: v => v >= 100000 ? '₹' + (v/100000).toFixed(0) + 'L' : '₹' + v } }
+        }
+      }
+    });
+
+    // Table
+    let tableHTML = '';
+    let inv2 = 0, corp2 = 0;
+    for (let y = 1; y <= years; y++) {
+      const monthlyP = mode === 'stepup' ? P * Math.pow(1 + stepup, y - 1) : P;
+      for (let m = 0; m < 12; m++) {
+        corp2 = (corp2 + monthlyP) * (1 + r);
+        inv2 += monthlyP;
+      }
+      const ret = corp2 - inv2;
+      tableHTML += `<tr class="hover:bg-gray-50">
+        <td class="px-4 py-2.5 font-medium text-gray-700">${y}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(inv2)}</td>
+        <td class="px-4 py-2.5 text-right text-green-600 font-medium">${fmt(ret)}</td>
+        <td class="px-4 py-2.5 text-right font-bold forest-green">${fmt(corp2)}</td>
+      </tr>`;
+    }
+    document.getElementById('yearTable').innerHTML = tableHTML;
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>

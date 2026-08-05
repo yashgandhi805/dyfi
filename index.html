@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <style>
+      * {
+        font-family: "Inter", sans-serif;
+      }
+      .forest-green {
+        color: #1e5631;
+      }
+      .bg-forest {
+        background-color: #1e5631;
+      }
+      .bg-forest-light {
+        background-color: #f0f7f2;
+      }
+      .accent-green {
+        color: #2e7d52;
+      }
+      .border-forest {
+        border-color: #1e5631;
+      }
+      .hover-forest:hover {
+        background-color: #1e5631;
+        color: white;
+      }
+      .tool-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(30, 86, 49, 0.15);
+      }
+      .tool-card {
+        transition: all 0.25s ease;
+      }
+      .gradient-hero {
+        background: linear-gradient(
+          135deg,
+          #f0f7f2 0%,
+          #ffffff 60%,
+          #e8f5ed 100%
+        );
+      }
+      .stat-border {
+        border-left: 3px solid #1e5631;
+      }
+      .badge-pill {
+        background: rgba(30, 86, 49, 0.1);
+        color: #1e5631;
+      }
+      .nav-link:hover {
+        color: #1e5631;
+      }
+      .btn-primary {
+        background-color: #1e5631;
+        color: white;
+        transition: background 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: #174a29;
+      }
+      .btn-outline {
+        border: 2px solid #1e5631;
+        color: #1e5631;
+        transition: all 0.2s;
+      }
+      .btn-outline:hover {
+        background-color: #1e5631;
+        color: white;
+      }
+      .footer-disclaimer {
+        background-color: #1e5631;
+      }
+      .icon-bg {
+        background: rgba(30, 86, 49, 0.08);
+      }
+
+      .btn-primary {
+        background-color: #1e5631;
+        color: white;
+        transition: background 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: #174a29;
+      }
+      .site-nav {
+        z-index: 1000;
+      }
+      .mobile-toggle {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: #1e5631;
+        background: #f0f7f2;
+        border: 1px solid rgba(30, 86, 49, 0.12);
+      }
+      .mobile-toggle:active {
+        transform: scale(0.98);
+      }
+      .mobile-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1090;
+      }
+      .mobile-backdrop.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(86vw, 360px);
+        background-color: #fff;
+        transform: translateX(100%);
+        transition: transform 0.22s ease;
+        z-index: 1100;
+        box-shadow: -18px 0 45px rgba(15, 23, 42, 0.18);
+        flex-direction: column;
+        visibility: hidden;
+      }
+      .mobile-menu.open {
+        transform: translateX(0);
+        visibility: visible;
+      }
+      .mobile-menu-head {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 16px;
+        border-bottom: 1px solid #eef2f1;
+      }
+      .mobile-menu-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto;
+      }
+      .mobile-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 48px;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+      .mobile-menu-link i {
+        width: 18px;
+        text-align: center;
+        color: #1e5631;
+      }
+      .mobile-menu-cta {
+        margin-top: 10px;
+        min-height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      body.nav-open {
+        overflow: hidden;
+      }
+      @media (max-width: 767px) {
+        body {
+          overflow-x: hidden;
+        }
+        .mobile-toggle {
+          display: inline-flex !important;
+        }
+        .mobile-backdrop {
+          display: block !important;
+        }
+        .mobile-menu {
+          display: flex !important;
+        }
+        .mobile-menu.open {
+          transform: translateX(0) !important;
+        }
+        section {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        .grid,
+        .grid > *,
+        .space-y-5,
+        .space-y-6 {
+          min-width: 0;
+        }
+        .max-w-7xl,
+        .max-w-xl,
+        .max-w-lg,
+        .max-w-sm {
+          min-width: 0;
+        }
+        h1 {
+          font-size: 1.75rem !important;
+          line-height: 1.16 !important;
+          letter-spacing: 0;
+        }
+        h2 {
+          font-size: 1.5rem !important;
+          line-height: 1.2 !important;
+        }
+        h3 {
+          line-height: 1.25 !important;
+        }
+        .gradient-hero {
+          padding-top: 2.75rem;
+          padding-bottom: 2.75rem;
+        }
+        .gradient-hero h1 {
+          font-size: 2rem !important;
+          line-height: 1.15 !important;
+        }
+        .gradient-hero p {
+          font-size: 1rem !important;
+          line-height: 1.65 !important;
+        }
+        section.bg-forest-light {
+          padding-top: 2rem !important;
+          padding-bottom: 2rem !important;
+        }
+        section.py-10,
+        section.py-16,
+        section.py-14 {
+          padding-top: 2rem !important;
+          padding-bottom: 2rem !important;
+        }
+        .badge-pill {
+          max-width: 100%;
+          line-height: 1.35;
+        }
+        .tool-card:hover {
+          transform: none;
+        }
+        .space-y-6 > .bg-white,
+        .space-y-6 > .bg-forest-light {
+          border-radius: 16px;
+          padding: 1rem;
+        }
+        .space-y-6 .flex.justify-between.items-center.mb-3 {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.75rem;
+        }
+        .space-y-6
+          .flex.justify-between.items-center.mb-3
+          > .flex.items-center {
+          align-self: stretch;
+        }
+        .space-y-6
+          .flex.justify-between.items-center.mb-3
+          input[type="number"] {
+          width: 100% !important;
+          max-width: none;
+        }
+        .result-card {
+          border-radius: 16px;
+          padding: 1.25rem;
+        }
+        .result-card .grid {
+          grid-template-columns: 1fr !important;
+          gap: 0.85rem;
+        }
+        .result-card p[id] {
+          font-size: 1.2rem;
+          line-height: 1.55rem;
+          word-break: keep-all;
+        }
+        .result-card p.text-2xl,
+        .result-card p.text-xl {
+          font-size: 1.2rem !important;
+          line-height: 1.55rem !important;
+        }
+        .result-card .border-t {
+          padding-top: 0.85rem;
+        }
+        input[type="number"] {
+          max-width: 8rem;
+        }
+        .mobile-chart-scroll {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 0.35rem;
+          margin-left: 0;
+          margin-right: 0;
+        }
+        .mobile-chart-scroll canvas {
+          width: 100% !important;
+          max-width: 100% !important;
+          height: 220px !important;
+        }
+        #returnsChart,
+        #riskChart {
+          height: 210px !important;
+        }
+        table {
+          min-width: 560px;
+        }
+        .overflow-x-auto {
+          max-width: 100%;
+        }
+        .fund-search {
+          min-height: 44px;
+        }
+        #fund-selector-row {
+          gap: 1rem;
+        }
+        #fund-cards > div {
+          border-radius: 16px;
+          padding: 1rem;
+        }
+        #verdict {
+          padding: 1rem;
+          border-radius: 16px;
+        }
+        .overflow-x-auto {
+          -webkit-overflow-scrolling: touch;
+        }
+        .flow-arrow .fa-arrow-right {
+          transform: rotate(90deg);
+        }
+        .flow-arrow + p {
+          text-align: center;
+        }
+      }
+      @media (min-width: 768px) {
+        .mobile-toggle,
+        .mobile-backdrop,
+        .mobile-menu {
+          display: none !important;
+          visibility: hidden !important;
+        }
+      }
+    </style>
+
+    <!-- NAVBAR -->
+    <nav
+      class="site-nav bg-white border-b border-gray-100 sticky top-0 shadow-sm"
+    >
+      <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-4">
+        <div
+          class="grid grid-cols-2 md:grid-cols-[auto_1fr_auto] items-center h-16 gap-3"
+        >
+          <a href="index.html" class="flex items-center gap-3 min-w-0">
+            <div
+              class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fa-solid fa-chart-line text-white text-sm"></i>
+            </div>
+            <span class="font-bold text-base forest-green leading-tight md:hidden">DYFI</span>
+            <span
+              class="font-bold text-base forest-green leading-tight hidden md:inline truncate"
+              >Discipline Your Finance</span
+            >
+          </a>
+          <div class="hidden md:flex items-center justify-center gap-5">
+            <a
+              href="sip-calculator.html"
+              class="text-sm text-gray-500 nav-link font-medium"
+              >SIP</a
+            >
+            <a
+              href="swp-calculator.html"
+              class="text-sm text-gray-500 nav-link font-medium"
+              >SWP</a
+            >
+            <a
+              href="stp-calculator.html"
+              class="text-sm text-gray-500 nav-link font-medium"
+              >STP</a
+            >
+            <a
+              href="lumpsum-calculator.html"
+              class="text-sm text-gray-500 nav-link font-medium"
+              >Lumpsum</a
+            >
+            <a
+              href="mf-comparison.html"
+              class="text-sm text-gray-500 nav-link font-medium"
+              >Compare Funds</a
+            >
+          </div>
+          <a
+            href="sip-calculator.html"
+            class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold hidden md:inline-flex justify-self-end"
+            >Start Calculating</a
+          >
+          <button
+            id="mobile-toggle"
+            type="button"
+            class="mobile-toggle md:hidden justify-self-end"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+          >
+            <i id="mobile-menu-icon" class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+    <div id="mobile-backdrop" class="mobile-backdrop md:hidden" hidden></div>
+    <aside id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+      <div class="mobile-menu-head">
+        <a href="index.html" class="flex items-center gap-3 min-w-0">
+          <div
+            class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0"
+          >
+            <i class="fa-solid fa-chart-line text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-base forest-green leading-tight"
+            >Discipline Your Finance</span
+          >
+        </a>
+        <button
+          id="mobile-close"
+          type="button"
+          class="mobile-toggle"
+          aria-label="Close navigation menu"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="mobile-menu-body">
+        <a
+          href="index.html"
+          class="mobile-menu-link bg-forest-light forest-green font-bold"
+          ><i class="fa-solid fa-house"></i><span>Home</span></a
+        >
+        <a
+          href="sip-calculator.html"
+          class="mobile-menu-link text-gray-600 font-semibold"
+          ><i class="fa-solid fa-repeat"></i><span>SIP Calculator</span></a
+        >
+        <a
+          href="swp-calculator.html"
+          class="mobile-menu-link text-gray-600 font-semibold"
+          ><i class="fa-solid fa-money-bill-transfer"></i
+          ><span>SWP Calculator</span></a
+        >
+        <a
+          href="stp-calculator.html"
+          class="mobile-menu-link text-gray-600 font-semibold"
+          ><i class="fa-solid fa-arrows-left-right"></i
+          ><span>STP Calculator</span></a
+        >
+        <a
+          href="lumpsum-calculator.html"
+          class="mobile-menu-link text-gray-600 font-semibold"
+          ><i class="fa-solid fa-sack-dollar"></i
+          ><span>Lumpsum Calculator</span></a
+        >
+        <a
+          href="mf-comparison.html"
+          class="mobile-menu-link text-gray-600 font-semibold"
+          ><i class="fa-solid fa-scale-balanced"></i
+          ><span>Compare Funds</span></a
+        >
+        <a href="sip-calculator.html" class="btn-primary mobile-menu-cta"
+          ><i class="fa-solid fa-calculator"></i
+          ><span>Start Calculating</span></a
+        >
+      </div>
+    </aside>
+    <script>
+      (function () {
+        const toggle = document.getElementById("mobile-toggle");
+        const close = document.getElementById("mobile-close");
+        const menu = document.getElementById("mobile-menu");
+        const backdrop = document.getElementById("mobile-backdrop");
+        const icon = document.getElementById("mobile-menu-icon");
+        if (!toggle || !close || !menu || !backdrop || !icon) return;
+        function setMenu(open) {
+          menu.className = open
+            ? "mobile-menu md:hidden open"
+            : "mobile-menu md:hidden";
+          backdrop.className = open
+            ? "mobile-backdrop md:hidden open"
+            : "mobile-backdrop md:hidden";
+          backdrop.hidden = !open;
+          menu.setAttribute("aria-hidden", String(!open));
+          toggle.setAttribute("aria-expanded", String(open));
+          toggle.setAttribute(
+            "aria-label",
+            open ? "Close navigation menu" : "Open navigation menu",
+          );
+          icon.className = open ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+          document.body.classList.toggle("nav-open", open);
+        }
+        toggle.addEventListener("click", function () {
+          setMenu(!menu.classList.contains("open"));
+        });
+        close.addEventListener("click", function () {
+          setMenu(false);
+        });
+        backdrop.addEventListener("click", function () {
+          setMenu(false);
+        });
+        menu.querySelectorAll("a").forEach(function (link) {
+          link.addEventListener("click", function () {
+            setMenu(false);
+          });
+        });
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") setMenu(false);
+        });
+      })();
+    </script>
+
+    <!-- HERO -->
+    <section class="gradient-hero py-16 md:py-24 px-4">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div
+              class="badge-pill inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6"
+            >
+              <i class="fa-solid fa-shield-halved text-xs"></i>
+              SEBI Compliant Tools · For Indian Investors
+            </div>
+            <h1
+              class="text-4xl md:text-5xl font-extrabold forest-green leading-tight mb-5"
+            >
+              Smart Mutual Fund<br />Planning Starts Here
+            </h1>
+            <p class="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">
+              Calculate SIP returns, plan SWP withdrawals, manage STP transfers,
+              and compare mutual funds — all in one place. Built for
+              disciplined, long-term wealth creation.
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <a
+                href="sip-calculator.html"
+                class="btn-primary px-6 py-3 rounded-xl font-semibold text-base inline-flex items-center gap-2"
+              >
+                <i class="fa-solid fa-calculator"></i> Try SIP Calculator
+              </a>
+              <a
+                href="mf-comparison.html"
+                class="btn-outline px-6 py-3 rounded-xl font-semibold text-base inline-flex items-center gap-2"
+              >
+                <i class="fa-solid fa-code-compare"></i> Compare Funds
+              </a>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="flex flex-wrap gap-6 mt-10">
+              <div class="stat-border pl-3">
+                <div class="text-xl font-bold forest-green">5+</div>
+                <div class="text-xs text-gray-500 font-medium">
+                  Investment Tools
+                </div>
+              </div>
+              <div class="stat-border pl-3">
+                <div class="text-xl font-bold forest-green">100%</div>
+                <div class="text-xs text-gray-500 font-medium">Free to Use</div>
+              </div>
+              <div class="stat-border pl-3">
+                <div class="text-xl font-bold forest-green">SEBI</div>
+                <div class="text-xs text-gray-500 font-medium">
+                  Compliant Info
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Visual -->
+          <div class="relative hidden md:block">
+            <div
+              class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold text-gray-700"
+                  >SIP Growth Projection</span
+                >
+                <span
+                  class="badge-pill text-xs px-2 py-1 rounded-full font-semibold"
+                  >15 Years</span
+                >
+              </div>
+              <!-- Mock chart bars -->
+              <div class="flex items-end gap-2 h-32 mb-3">
+                <div
+                  class="flex-1 bg-gray-100 rounded-t"
+                  style="height: 20%"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 30%; background: #c8e6c9"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 40%; background: #a5d6a7"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 50%; background: #81c784"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 58%; background: #66bb6a"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 68%; background: #4caf50"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 75%; background: #43a047"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 82%; background: #388e3c"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 90%; background: #2e7d32"
+                ></div>
+                <div
+                  class="flex-1 rounded-t"
+                  style="height: 100%; background: #1e5631"
+                ></div>
+              </div>
+              <div class="border-t border-gray-100 pt-3">
+                <div class="flex justify-between text-xs text-gray-500 mb-2">
+                  <span>Invested</span
+                  ><span class="font-semibold text-gray-700">₹18,00,000</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500 mb-2">
+                  <span>Est. Returns</span
+                  ><span class="font-semibold accent-green">₹28,64,817</span>
+                </div>
+                <div class="flex justify-between text-xs font-bold">
+                  <span class="forest-green">Total Value</span
+                  ><span class="forest-green">₹46,64,817</span>
+                </div>
+              </div>
+            </div>
+            <!-- Floating badges -->
+            <div
+              class="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-3 border border-gray-100 flex items-center gap-2"
+            >
+              <div
+                class="w-8 h-8 icon-bg rounded-lg flex items-center justify-center"
+              >
+                <i class="fa-solid fa-arrow-trend-up forest-green text-sm"></i>
+              </div>
+              <div>
+                <div class="text-xs text-gray-500">CAGR</div>
+                <div class="text-sm font-bold forest-green">12% p.a.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS GRID -->
+    <section class="py-16 px-4 bg-white">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold forest-green mb-3">
+            Investment Calculators
+          </h2>
+          <p class="text-gray-500 text-base max-w-xl mx-auto">
+            Powerful tools to plan, project, and optimise your mutual fund
+            investments across every strategy.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- SIP -->
+          <a
+            href="sip-calculator.html"
+            class="tool-card bg-white border border-gray-100 rounded-2xl p-6 block hover:border-green-200 cursor-pointer shadow-sm"
+          >
+            <div
+              class="w-12 h-12 icon-bg rounded-xl flex items-center justify-center mb-4"
+            >
+              <i class="fa-solid fa-repeat forest-green text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold forest-green mb-2">SIP Calculator</h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+              Calculate the future value of your monthly SIP investments. See
+              how compounding builds wealth over time.
+            </p>
+            <div
+              class="flex items-center gap-2 text-sm font-semibold accent-green"
+            >
+              Calculate now <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div
+              class="mt-4 pt-4 border-t border-gray-50 flex gap-3 text-xs text-gray-400"
+            >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Monthly
+                SIP</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Step-up
+                SIP</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i
+                >Goal-based</span
+              >
+            </div>
+          </a>
+
+          <!-- SWP -->
+          <a
+            href="swp-calculator.html"
+            class="tool-card bg-white border border-gray-100 rounded-2xl p-6 block hover:border-green-200 cursor-pointer shadow-sm"
+          >
+            <div
+              class="w-12 h-12 icon-bg rounded-xl flex items-center justify-center mb-4"
+            >
+              <i
+                class="fa-solid fa-money-bill-transfer forest-green text-xl"
+              ></i>
+            </div>
+            <h3 class="text-lg font-bold forest-green mb-2">SWP Calculator</h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+              Plan your systematic withdrawals from mutual funds. Know how long
+              your corpus will last with monthly payouts.
+            </p>
+            <div
+              class="flex items-center gap-2 text-sm font-semibold accent-green"
+            >
+              Calculate now <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div
+              class="mt-4 pt-4 border-t border-gray-50 flex gap-3 text-xs text-gray-400"
+            >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Monthly
+                payout</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Corpus
+                tracking</span
+              >
+            </div>
+          </a>
+
+          <!-- STP -->
+          <a
+            href="stp-calculator.html"
+            class="tool-card bg-white border border-gray-100 rounded-2xl p-6 block hover:border-green-200 cursor-pointer shadow-sm"
+          >
+            <div
+              class="w-12 h-12 icon-bg rounded-xl flex items-center justify-center mb-4"
+            >
+              <i class="fa-solid fa-arrows-left-right forest-green text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold forest-green mb-2">STP Calculator</h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+              Systematically transfer funds from one scheme to another. Balance
+              your portfolio with smart periodic transfers.
+            </p>
+            <div
+              class="flex items-center gap-2 text-sm font-semibold accent-green"
+            >
+              Calculate now <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div
+              class="mt-4 pt-4 border-t border-gray-50 flex gap-3 text-xs text-gray-400"
+            >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Debt to
+                Equity</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Risk
+                transfer</span
+              >
+            </div>
+          </a>
+
+          <!-- Lumpsum -->
+          <a
+            href="lumpsum-calculator.html"
+            class="tool-card bg-white border border-gray-100 rounded-2xl p-6 block hover:border-green-200 cursor-pointer shadow-sm"
+          >
+            <div
+              class="w-12 h-12 icon-bg rounded-xl flex items-center justify-center mb-4"
+            >
+              <i class="fa-solid fa-sack-dollar forest-green text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold forest-green mb-2">
+              Lumpsum Calculator
+            </h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+              Estimate returns on a one-time mutual fund investment. Find out
+              how much your lumpsum will grow over years.
+            </p>
+            <div
+              class="flex items-center gap-2 text-sm font-semibold accent-green"
+            >
+              Calculate now <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div
+              class="mt-4 pt-4 border-t border-gray-50 flex gap-3 text-xs text-gray-400"
+            >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>One-time
+                invest</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>CAGR
+                based</span
+              >
+            </div>
+          </a>
+
+          <!-- Compare -->
+          <a
+            href="mf-comparison.html"
+            class="tool-card bg-white border border-gray-100 rounded-2xl p-6 block hover:border-green-200 cursor-pointer shadow-sm sm:col-span-2 lg:col-span-1"
+          >
+            <div
+              class="w-12 h-12 icon-bg rounded-xl flex items-center justify-center mb-4"
+            >
+              <i class="fa-solid fa-scale-balanced forest-green text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold forest-green mb-2">
+              Compare Mutual Funds
+            </h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+              Compare up to 3 mutual funds side-by-side on returns, risk, AUM,
+              expense ratio, and fund manager performance.
+            </p>
+            <div
+              class="flex items-center gap-2 text-sm font-semibold accent-green"
+            >
+              Compare now <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div
+              class="mt-4 pt-4 border-t border-gray-50 flex gap-3 text-xs text-gray-400"
+            >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Up to 3
+                funds</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Risk
+                metrics</span
+              >
+              <span
+                ><i class="fa-solid fa-check text-green-500 mr-1"></i>Returns
+                chart</span
+              >
+            </div>
+          </a>
+
+          <!-- Coming soon — Tip -->
+          <div
+            class="tool-card bg-forest-light border border-green-100 rounded-2xl p-6 block shadow-sm"
+          >
+            <div
+              class="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+              style="background: rgba(30, 86, 49, 0.12)"
+            >
+              <i class="fa-solid fa-lightbulb forest-green text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold forest-green mb-2">Investing Tip</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              <strong class="forest-green"
+                >Start Early. Stay Consistent.</strong
+              >
+              A ₹5,000/month SIP for 20 years at 12% p.a. can grow to over
+              <strong class="forest-green">₹49.9 Lakhs</strong> — from just ₹12
+              Lakhs invested.
+            </p>
+            <div
+              class="bg-white rounded-xl p-3 text-xs text-gray-500 border border-green-100"
+            >
+              <i class="fa-solid fa-circle-info forest-green mr-1"></i>
+              Past returns are indicative only. Actual returns may vary. Invest
+              as per your risk profile.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="py-16 px-4 bg-forest-light">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold forest-green mb-3">How It Works</h2>
+          <p class="text-gray-500 text-base max-w-xl mx-auto">
+            Three simple steps to start making informed investment decisions.
+          </p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div
+              class="w-14 h-14 bg-forest rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md"
+            >
+              <span class="text-white font-bold text-xl">1</span>
+            </div>
+            <h4 class="font-bold text-lg forest-green mb-2">
+              Choose a Calculator
+            </h4>
+            <p class="text-gray-500 text-sm leading-relaxed">
+              Select SIP, SWP, STP, Lumpsum, or Fund Comparison based on your
+              investment strategy.
+            </p>
+          </div>
+          <div class="text-center">
+            <div
+              class="w-14 h-14 bg-forest rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md"
+            >
+              <span class="text-white font-bold text-xl">2</span>
+            </div>
+            <h4 class="font-bold text-lg forest-green mb-2">
+              Enter Your Numbers
+            </h4>
+            <p class="text-gray-500 text-sm leading-relaxed">
+              Input your investment amount, expected returns, and time horizon.
+              Adjust sliders in real-time.
+            </p>
+          </div>
+          <div class="text-center">
+            <div
+              class="w-14 h-14 bg-forest rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md"
+            >
+              <span class="text-white font-bold text-xl">3</span>
+            </div>
+            <h4 class="font-bold text-lg forest-green mb-2">
+              Analyse & Decide
+            </h4>
+            <p class="text-gray-500 text-sm leading-relaxed">
+              Review projections with visual charts. Consult a SEBI-registered
+              advisor before investing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT / DISCLAIMER BAND -->
+    <section class="py-14 px-4 bg-white">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-3xl font-bold forest-green mb-4">
+              Why Discipline Your Finance?
+            </h2>
+            <p class="text-gray-600 text-base leading-relaxed mb-6">
+              We believe wealth creation is a result of disciplined, informed,
+              and consistent investing — not speculation. Our tools are designed
+              to help you understand the power of compounding and make
+              data-driven decisions for your financial future.
+            </p>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3 text-sm text-gray-600">
+                <i
+                  class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"
+                ></i>
+                <span
+                  >All calculators use standard financial formulae aligned with
+                  AMFI guidelines.</span
+                >
+              </li>
+              <li class="flex items-start gap-3 text-sm text-gray-600">
+                <i
+                  class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"
+                ></i>
+                <span
+                  >No login required. No data stored. 100% private and
+                  free.</span
+                >
+              </li>
+              <li class="flex items-start gap-3 text-sm text-gray-600">
+                <i
+                  class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"
+                ></i>
+                <span
+                  >Returns shown are illustrative. Actual returns depend on
+                  market conditions.</span
+                >
+              </li>
+              <li class="flex items-start gap-3 text-sm text-gray-600">
+                <i
+                  class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"
+                ></i>
+                <span
+                  >Always consult a SEBI-registered investment advisor before
+                  investing.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="bg-forest-light rounded-2xl p-8 border border-green-100">
+            <div class="flex items-start gap-4 mb-6">
+              <div
+                class="w-10 h-10 bg-forest rounded-xl flex items-center justify-center flex-shrink-0"
+              >
+                <i class="fa-solid fa-book-open text-white text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold forest-green mb-1">
+                  Types of Mutual Fund Investments
+                </h4>
+                <p class="text-xs text-gray-500">
+                  Understanding the basics of each strategy
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white rounded-xl p-4 border border-green-50">
+                <div class="flex items-center gap-2 mb-1">
+                  <i class="fa-solid fa-repeat forest-green text-sm"></i>
+                  <span class="font-semibold text-sm forest-green"
+                    >SIP — Systematic Investment Plan</span
+                  >
+                </div>
+                <p class="text-xs text-gray-500">
+                  Invest a fixed amount regularly. Benefit from rupee cost
+                  averaging.
+                </p>
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-green-50">
+                <div class="flex items-center gap-2 mb-1">
+                  <i
+                    class="fa-solid fa-money-bill-transfer forest-green text-sm"
+                  ></i>
+                  <span class="font-semibold text-sm forest-green"
+                    >SWP — Systematic Withdrawal Plan</span
+                  >
+                </div>
+                <p class="text-xs text-gray-500">
+                  Withdraw a fixed amount periodically from your corpus.
+                </p>
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-green-50">
+                <div class="flex items-center gap-2 mb-1">
+                  <i
+                    class="fa-solid fa-arrows-left-right forest-green text-sm"
+                  ></i>
+                  <span class="font-semibold text-sm forest-green"
+                    >STP — Systematic Transfer Plan</span
+                  >
+                </div>
+                <p class="text-xs text-gray-500">
+                  Transfer fixed amount from one fund to another periodically.
+                </p>
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-green-50">
+                <div class="flex items-center gap-2 mb-1">
+                  <i class="fa-solid fa-sack-dollar forest-green text-sm"></i>
+                  <span class="font-semibold text-sm forest-green"
+                    >Lumpsum — One-time Investment</span
+                  >
+                </div>
+                <p class="text-xs text-gray-500">
+                  Invest a large amount at once and let it compound over time.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPLIANCE DISCLAIMER BANNER -->
+    <section class="py-4 px-4 bg-amber-50 border-y border-amber-200">
+      <div class="max-w-7xl mx-auto flex items-center gap-3">
+        <i
+          class="fa-solid fa-triangle-exclamation text-amber-500 text-lg flex-shrink-0"
+        ></i>
+        <p class="text-xs text-amber-800 leading-relaxed">
+          <strong>Important:</strong> Mutual fund investments are subject to
+          market risks. Please read all scheme related documents carefully
+          before investing. Past performance is not indicative of future
+          returns. The calculators on this website are for illustration purposes
+          only. Please consult a SEBI-registered investment advisor before
+          making any investment decision.
+        </p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid md:grid-cols-4 gap-8 mb-10">
+          <!-- Brand -->
+          <div class="md:col-span-1">
+            <div class="flex items-center gap-3 mb-4">
+              <div
+                class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center"
+              >
+                <i class="fa-solid fa-chart-line text-white text-sm"></i>
+              </div>
+              <div>
+                <span class="font-bold text-sm text-white leading-none block"
+                  >Discipline Your</span
+                >
+                <span class="font-bold text-sm text-white leading-none block"
+                  >Finance</span
+                >
+              </div>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed">
+              Free mutual fund calculators for disciplined, long-term wealth
+              creation.
+            </p>
+          </div>
+
+          <!-- Calculators -->
+          <div>
+            <h5 class="font-semibold text-white text-sm mb-4">Calculators</h5>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="sip-calculator.html"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >SIP Calculator</a
+                >
+              </li>
+              <li>
+                <a
+                  href="swp-calculator.html"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >SWP Calculator</a
+                >
+              </li>
+              <li>
+                <a
+                  href="stp-calculator.html"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >STP Calculator</a
+                >
+              </li>
+              <li>
+                <a
+                  href="lumpsum-calculator.html"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >Lumpsum Calculator</a
+                >
+              </li>
+              <li>
+                <a
+                  href="mf-comparison.html"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >Compare Funds</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Learn -->
+          <div>
+            <h5 class="font-semibold text-white text-sm mb-4">Learn</h5>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >What is SIP?</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >What is SWP?</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >What is STP?</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >Lumpsum vs SIP</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >Mutual Fund Types</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Regulatory -->
+          <div>
+            <h5 class="font-semibold text-white text-sm mb-4">Regulatory</h5>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="https://www.sebi.gov.in"
+                  target="_blank"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >SEBI</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.amfiindia.com"
+                  target="_blank"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >AMFI India</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >Disclaimer</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 text-xs hover:text-green-400 transition-colors"
+                  >Privacy Policy</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-700 pt-6">
+          <div class="bg-gray-800 rounded-xl p-4 mb-5">
+            <p class="text-center text-xs text-gray-300 leading-relaxed">
+              <i
+                class="fa-solid fa-circle-exclamation text-yellow-400 mr-2"
+              ></i>
+              <strong class="text-white"
+                >Mutual fund investments are subject to market risks, please
+                read all scheme related documents carefully.</strong
+              >
+            </p>
+          </div>
+          <p class="text-center text-xs text-gray-500">
+            © 2026 Discipline Your Finance. For educational and illustration
+            purposes only. Not a SEBI-registered investment advisor. Always
+            consult a qualified financial advisor before investing.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

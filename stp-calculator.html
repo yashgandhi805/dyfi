@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  .forest-green { color: #1E5631; }
+  .bg-forest { background-color: #1E5631; }
+  .bg-forest-light { background-color: #f0f7f2; }
+  .nav-link:hover { color: #1E5631; }
+  .result-card { background: linear-gradient(135deg, #1E5631 0%, #2e7d52 100%); }
+  input[type=range] { accent-color: #1E5631; }
+  .flow-arrow { color: #1E5631; }
+  .fund-box { border: 2px solid #e5e7eb; transition: border-color 0.2s; }
+  .fund-box:focus-within { border-color: #1E5631; }
+
+  .btn-primary { background-color: #1E5631; color: white; transition: background 0.2s; }
+  .btn-primary:hover { background-color: #174a29; }
+  .site-nav { z-index: 1000; }
+  .mobile-toggle { width: 40px; height: 40px; border-radius: 10px; display: none; align-items: center; justify-content: center; color: #1E5631; background: #f0f7f2; border: 1px solid rgba(30,86,49,0.12); }
+  .mobile-toggle:active { transform: scale(0.98); }
+  .mobile-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,0.42); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1090; }
+  .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
+  .mobile-menu { position: fixed; top: 0; right: 0; bottom: 0; width: min(86vw, 360px); background-color: #fff; transform: translateX(100%); transition: transform 0.22s ease; z-index: 1100; box-shadow: -18px 0 45px rgba(15,23,42,0.18); flex-direction: column; visibility: hidden; }
+  .mobile-menu.open { transform: translateX(0); visibility: visible; }
+  .mobile-menu-head { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; border-bottom: 1px solid #eef2f1; }
+  .mobile-menu-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .mobile-menu-link { display: flex; align-items: center; gap: 12px; min-height: 48px; border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+  .mobile-menu-link i { width: 18px; text-align: center; color: #1E5631; }
+  .mobile-menu-cta { margin-top: 10px; min-height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 700; }
+  body.nav-open { overflow: hidden; }
+  @media (max-width: 767px) {
+    body { overflow-x: hidden; }
+    .mobile-toggle { display: inline-flex !important; }
+    .mobile-backdrop { display: block !important; }
+    .mobile-menu { display: flex !important; }
+    .mobile-menu.open { transform: translateX(0) !important; }
+    section { padding-left: 1rem; padding-right: 1rem; }
+    .grid, .grid > *, .space-y-5, .space-y-6 { min-width: 0; }
+    .max-w-7xl, .max-w-xl, .max-w-lg, .max-w-sm { min-width: 0; }
+    h1 { font-size: 1.75rem !important; line-height: 1.16 !important; letter-spacing: 0; }
+    h2 { font-size: 1.5rem !important; line-height: 1.2 !important; }
+    h3 { line-height: 1.25 !important; }
+    .gradient-hero { padding-top: 2.75rem; padding-bottom: 2.75rem; }
+    .gradient-hero h1 { font-size: 2rem !important; line-height: 1.15 !important; }
+    .gradient-hero p { font-size: 1rem !important; line-height: 1.65 !important; }
+    section.bg-forest-light { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    section.py-10, section.py-16, section.py-14 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    .badge-pill { max-width: 100%; line-height: 1.35; }
+    .tool-card:hover { transform: none; }
+    .space-y-6 > .bg-white, .space-y-6 > .bg-forest-light { border-radius: 16px; padding: 1rem; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 > .flex.items-center { align-self: stretch; }
+    .space-y-6 .flex.justify-between.items-center.mb-3 input[type='number'] { width: 100% !important; max-width: none; }
+    .result-card { border-radius: 16px; padding: 1.25rem; }
+    .result-card .grid { grid-template-columns: 1fr !important; gap: 0.85rem; }
+    .result-card p[id] { font-size: 1.2rem; line-height: 1.55rem; word-break: keep-all; }
+    .result-card p.text-2xl, .result-card p.text-xl { font-size: 1.2rem !important; line-height: 1.55rem !important; }
+    .result-card .border-t { padding-top: 0.85rem; }
+    input[type='number'] { max-width: 8rem; }
+    .mobile-chart-scroll { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 0.35rem; margin-left: 0; margin-right: 0; }
+    .mobile-chart-scroll canvas { width: 100% !important; max-width: 100% !important; height: 220px !important; }
+    #returnsChart, #riskChart { height: 210px !important; }
+    table { min-width: 560px; }
+    .overflow-x-auto { max-width: 100%; }
+    .fund-search { min-height: 44px; }
+    #fund-selector-row { gap: 1rem; }
+    #fund-cards > div { border-radius: 16px; padding: 1rem; }
+    #verdict { padding: 1rem; border-radius: 16px; }
+    .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+    .flow-arrow .fa-arrow-right { transform: rotate(90deg); }
+    .flow-arrow + p { text-align: center; }
+  }
+  @media (min-width: 768px) {
+    .mobile-toggle, .mobile-backdrop, .mobile-menu { display: none !important; visibility: hidden !important; }
+  }
+
+</style>
+
+<!-- NAVBAR -->
+<nav class="site-nav bg-white border-b border-gray-100 sticky top-0 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-[auto_1fr_auto] items-center h-16 gap-3">
+      <a href="index.html" class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-bold text-base forest-green leading-tight md:hidden">DYFI</span>
+        <span class="font-bold text-base forest-green leading-tight hidden md:inline truncate">Discipline Your Finance</span>
+      </a>
+      <div class="hidden md:flex items-center justify-center gap-5">
+        <a href="sip-calculator.html" class="text-sm text-gray-500 nav-link font-medium">SIP</a>
+        <a href="swp-calculator.html" class="text-sm text-gray-500 nav-link font-medium">SWP</a>
+        <a href="stp-calculator.html" class="text-sm font-semibold forest-green border-b-2 border-green-700 pb-0.5">STP</a>
+        <a href="lumpsum-calculator.html" class="text-sm text-gray-500 nav-link font-medium">Lumpsum</a>
+        <a href="mf-comparison.html" class="text-sm text-gray-500 nav-link font-medium">Compare Funds</a>
+      </div>
+      <a href="index.html" class="text-xs text-gray-500 hover:text-gray-700 hidden md:inline-flex items-center justify-self-end"><i class="fa-solid fa-house mr-1"></i> Home</a>
+      <button id="mobile-toggle" type="button" class="mobile-toggle md:hidden justify-self-end" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <i id="mobile-menu-icon" class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="mobile-backdrop" class="mobile-backdrop md:hidden" hidden></div>
+<aside id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+  <div class="mobile-menu-head">
+    <a href="index.html" class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 bg-forest rounded-lg flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-bold text-base forest-green leading-tight">Discipline Your Finance</span>
+    </a>
+    <button id="mobile-close" type="button" class="mobile-toggle" aria-label="Close navigation menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="mobile-menu-body">
+    <a href="index.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="sip-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-repeat"></i><span>SIP Calculator</span></a>
+      <a href="swp-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-money-bill-transfer"></i><span>SWP Calculator</span></a>
+      <a href="stp-calculator.html" class="mobile-menu-link bg-forest-light forest-green font-bold"><i class="fa-solid fa-arrows-left-right"></i><span>STP Calculator</span></a>
+      <a href="lumpsum-calculator.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-sack-dollar"></i><span>Lumpsum Calculator</span></a>
+      <a href="mf-comparison.html" class="mobile-menu-link text-gray-600 font-semibold"><i class="fa-solid fa-scale-balanced"></i><span>Compare Funds</span></a>
+    <a href="sip-calculator.html" class="btn-primary mobile-menu-cta"><i class="fa-solid fa-calculator"></i><span>Start Calculating</span></a>
+  </div>
+</aside>
+<script>
+(function () {
+  const toggle = document.getElementById('mobile-toggle');
+  const close = document.getElementById('mobile-close');
+  const menu = document.getElementById('mobile-menu');
+  const backdrop = document.getElementById('mobile-backdrop');
+  const icon = document.getElementById('mobile-menu-icon');
+  if (!toggle || !close || !menu || !backdrop || !icon) return;
+  function setMenu(open) {
+    menu.className = open ? 'mobile-menu md:hidden open' : 'mobile-menu md:hidden';
+    backdrop.className = open ? 'mobile-backdrop md:hidden open' : 'mobile-backdrop md:hidden';
+    backdrop.hidden = !open;
+    menu.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+    document.body.classList.toggle('nav-open', open);
+  }
+  toggle.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+  close.addEventListener('click', function () { setMenu(false); });
+  backdrop.addEventListener('click', function () { setMenu(false); });
+  menu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', function () { setMenu(false); }); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') setMenu(false); });
+})();
+</script>
+
+<!-- PAGE HEADER -->
+<section class="bg-forest-light py-10 px-4 border-b border-green-100">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+      <a href="index.html" class="hover:text-green-700">Home</a>
+      <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+      <span class="forest-green font-medium">STP Calculator</span>
+    </div>
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 bg-forest rounded-xl flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-arrows-left-right text-white text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold forest-green">STP Calculator</h1>
+        <p class="text-gray-500 text-sm mt-1 max-w-xl">Systematic Transfer Plan — Transfer a fixed amount from a source fund (typically debt) to a target fund (typically equity) at regular intervals to balance your portfolio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STP FLOW VISUAL -->
+<section class="py-8 px-4 bg-white border-b border-gray-50">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+      <div class="w-full md:flex-1 max-w-xs bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 text-center">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-building-columns text-blue-600 text-lg"></i>
+        </div>
+        <h4 class="font-bold text-blue-800 text-sm mb-1">Source Fund</h4>
+        <p class="text-xs text-blue-600">Debt / Liquid Fund</p>
+        <p class="text-xs text-gray-500 mt-2">Lower risk, stable returns. Your lumpsum is parked here.</p>
+      </div>
+      <div class="flow-arrow flex flex-col items-center gap-1">
+        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+          <i class="fa-solid fa-arrow-right forest-green text-lg"></i>
+        </div>
+        <p class="text-xs text-gray-500 font-semibold">Transfers<br>Monthly</p>
+      </div>
+      <div class="w-full md:flex-1 max-w-xs bg-green-50 border-2 border-green-200 rounded-2xl p-5 text-center">
+        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-chart-line forest-green text-lg"></i>
+        </div>
+        <h4 class="font-bold forest-green text-sm mb-1">Target Fund</h4>
+        <p class="text-xs text-green-600">Equity / Hybrid Fund</p>
+        <p class="text-xs text-gray-500 mt-2">Higher growth potential. Builds equity exposure gradually.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="py-10 px-4 bg-white">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-8">
+
+      <!-- LEFT: Inputs -->
+      <div class="space-y-6">
+
+        <!-- Initial Corpus in Source Fund -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Initial Amount in Source Fund</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-r border-gray-200">₹</span>
+              <input type="number" id="sourceCorpus" value="1000000" min="10000" max="100000000" step="10000" class="w-32 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+            </div>
+          </div>
+          <input type="range" id="sourceRange" min="100000" max="10000000" step="50000" value="1000000" class="w-full" oninput="syncStp('source', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>₹1 L</span><span>₹1 Cr</span></div>
+        </div>
+
+        <!-- Monthly Transfer -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700">Monthly Transfer Amount</label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-r border-gray-200">₹</span>
+              <input type="number" id="transfer" value="20000" min="1000" max="1000000" step="1000" class="w-28 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+            </div>
+          </div>
+          <input type="range" id="transferRange" min="1000" max="200000" step="1000" value="20000" class="w-full" oninput="syncStp('transfer', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>₹1,000</span><span>₹2,00,000</span></div>
+        </div>
+
+        <!-- Source Fund Return -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              Source Fund Return (Debt/Liquid)
+              <span class="text-xs text-blue-500 font-normal bg-blue-50 px-2 py-0.5 rounded-full">Typically 6-8%</span>
+            </label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="sourceReturn" value="7" min="1" max="15" step="0.5" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">%</span>
+            </div>
+          </div>
+          <input type="range" id="sourceReturnRange" min="1" max="15" step="0.5" value="7" class="w-full" oninput="syncStp('sourceReturn', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1%</span><span>15%</span></div>
+        </div>
+
+        <!-- Target Fund Return -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              Target Fund Return (Equity)
+              <span class="text-xs text-green-600 font-normal bg-green-50 px-2 py-0.5 rounded-full">Typically 10-15%</span>
+            </label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <input type="number" id="targetReturn" value="12" min="1" max="30" step="0.5" class="w-20 px-3 py-1.5 text-sm font-semibold text-gray-800 outline-none" onchange="calculate()">
+              <span class="bg-gray-50 px-3 py-1.5 text-sm text-gray-500 border-l border-gray-200">%</span>
+            </div>
+          </div>
+          <input type="range" id="targetReturnRange" min="1" max="30" step="0.5" value="12" class="w-full" oninput="syncStp('targetReturn', this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1"><span>1%</span><span>30%</span></div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
+          <p class="text-xs text-amber-800 leading-relaxed">STP projections assume constant rates. In reality, equity returns are volatile. STP helps reduce timing risk through gradual deployment.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="space-y-5">
+
+        <!-- Result Card -->
+        <div class="result-card rounded-2xl p-6 text-white shadow-xl">
+          <p class="text-green-200 text-xs font-semibold uppercase tracking-wider mb-4">STP Projection</p>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-green-300 text-xs mb-1">STP Duration</p>
+              <p class="text-xl font-bold" id="r-duration">50 Months</p>
+            </div>
+            <div>
+              <p class="text-green-300 text-xs mb-1">Total Transferred</p>
+              <p class="text-xl font-bold" id="r-transferred">₹10,00,000</p>
+            </div>
+          </div>
+          <div class="border-t border-green-700 pt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-green-300 text-xs mb-1">Source Fund Interest Earned</p>
+              <p class="text-lg font-bold" id="r-source-interest">₹1,20,000</p>
+            </div>
+            <div>
+              <p class="text-green-300 text-xs mb-1">Target Fund Final Value</p>
+              <p class="text-2xl font-extrabold" id="r-target-value">₹14,50,000</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-gray-700">Source vs Target Fund Balance</h3>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block bg-blue-400"></span>Source Fund</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#1E5631"></span>Target Fund</span>
+          </div>
+          <div class="mobile-chart-scroll"><canvas id="stpChart" height="220"></canvas></div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-50">
+            <h3 class="text-sm font-semibold text-gray-700">Month-wise Snapshot (Every 6 months)</h3>
+          </div>
+          <div class="overflow-x-auto max-h-72 overflow-y-auto">
+            <table class="w-full text-xs">
+              <thead class="bg-gray-50 sticky top-0">
+                <tr>
+                  <th class="px-4 py-3 text-left text-gray-500 font-semibold">Month</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Source Balance</th>
+                  <th class="px-4 py-3 text-right text-gray-500 font-semibold">Target Balance</th>
+                </tr>
+              </thead>
+              <tbody id="stpTable" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explainers -->
+    <div class="mt-10 grid md:grid-cols-3 gap-6">
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-question-circle forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">What is STP?</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">STP lets you move money systematically from one mutual fund to another. Commonly used to deploy a lump sum into equity gradually, reducing the risk of investing at market peaks.</p>
+      </div>
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-diagram-project forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">Types of STP</h4>
+        <p class="text-xs text-gray-600 leading-relaxed"><strong>Fixed STP:</strong> Fixed amount transferred monthly. <strong>Flexible STP:</strong> Variable amount based on market conditions. <strong>Capital Appreciation STP:</strong> Only the gains from source fund are transferred.</p>
+      </div>
+      <div class="bg-forest-light rounded-xl p-5 border border-green-100">
+        <i class="fa-solid fa-shield-halved forest-green mb-3 text-xl"></i>
+        <h4 class="font-bold forest-green text-sm mb-2">Tax Implications</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">Each STP transaction from the source fund is treated as a redemption and may attract capital gains tax. The transferred amount into the target fund restarts the holding period. Consult a tax advisor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-gray-900 text-white py-6 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-gray-800 rounded-xl p-4 mb-4">
+      <p class="text-center text-xs text-gray-300 leading-relaxed">
+        <i class="fa-solid fa-circle-exclamation text-yellow-400 mr-2"></i>
+        <strong class="text-white">Mutual fund investments are subject to market risks, please read all scheme related documents carefully.</strong>
+      </p>
+    </div>
+    <p class="text-center text-xs text-gray-500">© 2026 Discipline Your Finance. For educational and illustration purposes only.</p>
+  </div>
+</footer>
+
+<script>
+  let stpChart = null;
+
+  function syncStp(type, val) {
+    val = parseFloat(val);
+    const map = {
+      source: ['sourceCorpus','sourceRange'],
+      transfer: ['transfer','transferRange'],
+      sourceReturn: ['sourceReturn','sourceReturnRange'],
+      targetReturn: ['targetReturn','targetReturnRange']
+    };
+    if (map[type]) {
+      document.getElementById(map[type][0]).value = val;
+      document.getElementById(map[type][1]).value = val;
+    }
+    calculate();
+  }
+
+  function fmt(n) {
+    if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
+    if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+    return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  function calculate() {
+    ['sourceRange','transferRange','sourceReturnRange','targetReturnRange'].forEach(id => {
+      const inputId = id.replace('Range','').replace('source','sourceCorpus').replace('transfer','transfer').replace('sourceReturn','sourceReturn').replace('targetReturn','targetReturn');
+    });
+    document.getElementById('sourceRange').value = document.getElementById('sourceCorpus').value;
+    document.getElementById('transferRange').value = document.getElementById('transfer').value;
+    document.getElementById('sourceReturnRange').value = document.getElementById('sourceReturn').value;
+    document.getElementById('targetReturnRange').value = document.getElementById('targetReturn').value;
+
+    let source = parseFloat(document.getElementById('sourceCorpus').value) || 1000000;
+    const T = parseFloat(document.getElementById('transfer').value) || 20000;
+    const srcR = (parseFloat(document.getElementById('sourceReturn').value) || 7) / 100 / 12;
+    const tgtR = (parseFloat(document.getElementById('targetReturn').value) || 12) / 100 / 12;
+
+    let target = 0, totalTransferred = 0, sourceInterest = 0;
+    const labels = [], srcArr = [], tgtArr = [];
+    let tableHTML = '';
+    let month = 0;
+
+    while (source > 0 && month < 600) {
+      month++;
+      const srcInt = source * srcR;
+      sourceInterest += srcInt;
+      source = source + srcInt - T;
+      const tgtInt = target * tgtR;
+      const actualTransfer = source < 0 ? (T + source) : T;
+      if (source < 0) source = 0;
+      target = target + tgtInt + actualTransfer;
+      totalTransferred += actualTransfer;
+
+      labels.push('M' + month);
+      srcArr.push(Math.round(source));
+      tgtArr.push(Math.round(target));
+
+      if (month % 6 === 0 || source === 0) {
+        tableHTML += `<tr class="hover:bg-gray-50">
+          <td class="px-4 py-2.5 font-medium text-gray-700">Month ${month}</td>
+          <td class="px-4 py-2.5 text-right text-blue-600 font-medium">${fmt(source)}</td>
+          <td class="px-4 py-2.5 text-right font-bold forest-green">${fmt(target)}</td>
+        </tr>`;
+      }
+    }
+
+    const durationText = month >= 12 ? Math.floor(month/12) + ' Yrs ' + (month%12) + ' Mo' : month + ' Months';
+    document.getElementById('r-duration').textContent = durationText;
+    document.getElementById('r-transferred').textContent = fmt(totalTransferred);
+    document.getElementById('r-source-interest').textContent = fmt(sourceInterest);
+    document.getElementById('r-target-value').textContent = fmt(target);
+    document.getElementById('stpTable').innerHTML = tableHTML;
+
+    // Downsample for chart
+    const step = Math.max(1, Math.floor(labels.length / 20));
+    const cLabels = labels.filter((_, i) => i % step === 0);
+    const cSrc = srcArr.filter((_, i) => i % step === 0);
+    const cTgt = tgtArr.filter((_, i) => i % step === 0);
+
+    const ctx = document.getElementById('stpChart').getContext('2d');
+    if (stpChart) stpChart.destroy();
+    stpChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: cLabels,
+        datasets: [
+          { label: 'Source Fund', data: cSrc, borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.08)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 2 },
+          { label: 'Target Fund', data: cTgt, borderColor: '#1E5631', backgroundColor: 'rgba(30,86,49,0.08)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false }, tooltip: {
+          callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) }
+        }},
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: window.innerWidth < 768 ? 9 : 9 }, maxTicksLimit: window.innerWidth < 768 ? 5 : 8, maxRotation: 0, autoSkip: true } },
+          y: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 10 }, callback: v => v >= 100000 ? '₹' + (v/100000).toFixed(0) + 'L' : '₹' + v } }
+        }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>
